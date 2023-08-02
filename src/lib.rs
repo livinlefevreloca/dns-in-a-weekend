@@ -406,7 +406,7 @@ mod test {
 
     #[test]
     fn test_build_query() {
-        let query = DNSMessage::default().add_header(1, 0x0000).add_question("google.com".to_owned(), 0x01, 0x01).serialize();
+        let query = DNSMessage::default().add_header(1, 0x0000).add_question("google.com".to_owned(), TYPE_A, CLASS_IN).serialize();
         let expected = Vec::from_iter(
             b"\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x06google\x03com\x00\x00\x01\x00\x01".iter().copied(),
         );
@@ -415,7 +415,7 @@ mod test {
 
     #[test]
     fn test_query() {
-        let message = DNSMessage::default().add_header(1, 0x0000).add_question("google.com".to_owned(), 0x01, 0x01);
+        let message = DNSMessage::default().add_header(1, 0x0000).add_question("google.com".to_owned(), TYPE_A, CLASS_IN);
         let query = message.serialize();
         let local_ip_addr = Ipv4Addr::new(0,0,0,0);
         let local_sock_addr = SocketAddrV4::new(local_ip_addr, 0);
