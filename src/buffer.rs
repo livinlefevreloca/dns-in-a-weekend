@@ -1,18 +1,14 @@
 use byteorder::{BigEndian, ByteOrder};
 
-
 #[derive(Default, Debug, Clone)]
-pub struct Buffer<'a> {
-    bytes: &'a [u8],
+pub struct Buffer {
+    bytes: Vec<u8>,
     pointer: usize,
 }
 
-impl<'a> Buffer<'a> {
-    pub fn new(bytes: &'a [u8]) -> Self {
-        Self {
-            bytes,
-            pointer: 0,
-        }
+impl Buffer {
+    pub fn new(bytes: Vec<u8>) -> Self {
+        Self { bytes, pointer: 0 }
     }
 
     pub fn read_u8(&mut self) -> u8 {
@@ -22,19 +18,19 @@ impl<'a> Buffer<'a> {
     }
 
     pub fn read_u16(&mut self) -> u16 {
-        let bytes = &self.bytes[self.pointer..self.pointer+2];
+        let bytes = &self.bytes[self.pointer..self.pointer + 2];
         self.pointer += 2;
         BigEndian::read_u16(bytes)
     }
 
     pub fn read_u32(&mut self) -> u32 {
-        let bytes = &self.bytes[self.pointer..self.pointer+4];
+        let bytes = &self.bytes[self.pointer..self.pointer + 4];
         self.pointer += 4;
         BigEndian::read_u32(bytes)
     }
 
     pub fn read(&mut self, len: usize) -> &[u8] {
-        let bytes = &self.bytes[self.pointer..self.pointer+len];
+        let bytes = &self.bytes[self.pointer..self.pointer + len];
         self.pointer += len;
         bytes
     }
@@ -54,35 +50,36 @@ impl<'a> Buffer<'a> {
     pub fn position(&self) -> usize {
         self.pointer
     }
-}
 
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.bytes[self.pointer..]
+    }
+
+    pub fn into_bytes(self) -> Vec<u8> {
+        self.bytes
+    }
+}
 
 pub struct WriterBuffer {
     bytes: Vec<u8>,
     pointer: usize,
 }
 
-
 impl WriterBuffer {
     pub fn new(capacity: usize) -> Self {
-
         let bytes = if capacity > 0 {
             Vec::with_capacity(capacity)
         } else {
             Vec::new()
         };
 
-        Self {
-            bytes,
-            pointer: 0,
-        }
+        Self { bytes, pointer: 0 }
     }
 
     pub fn write_u8(&mut self, byte: u8) {
         self.bytes.push(byte);
         self.pointer += 1;
     }
-
 
     pub fn write_u16(&mut self, value: u16) {
         let mut bytes = [0; 2];
