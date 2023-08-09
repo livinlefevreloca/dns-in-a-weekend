@@ -548,13 +548,11 @@ fn send_dns_query(message: DNSMessage, server: Ipv4Addr) -> Result<DNSMessage, B
         let remote_sock_addr = get_sock_addr(server, 53);
         let sock = UdpSocket::bind(local_sock_addr).expect("Failed to bind to port");
 
-        println!("Sending query: {:?}", query);
         sock.send_to(&query, remote_sock_addr)
             .expect("Failed to send query");
 
         let buf_size = 1024;
         let mut buf = vec![0; buf_size];
-        print!("Waiting for response...");
         let _ = sock.recv_from(&mut buf)?;
 
         Ok(DNSMessage::deserialize(buf.to_vec()))
@@ -563,7 +561,7 @@ fn send_dns_query(message: DNSMessage, server: Ipv4Addr) -> Result<DNSMessage, B
 #[cfg(test)]
 mod test {
     use super::*;
-    use std::{net::{Ipv4Addr, SocketAddrV4, UdpSocket}, str::FromStr};
+    use std::{net::Ipv4Addr, str::FromStr};
 
     #[test]
     fn test_encode_name() {
